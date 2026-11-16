@@ -26,7 +26,7 @@
 7. [Repository Structure](#-repository-structure)
 8. [Getting Started](#-getting-started)
 9. [Key Business Questions](#-key-business-questions)
-10. [Machine Learning Components](#-machine-learning-components)
+10. [Deep Learning Components](#-deep-learning-components)
 11. [Dashboards](#-dashboards)
 12. [Deployment](#-deployment)
 13. [Results & Key Insights](#-results--key-insights)
@@ -48,7 +48,7 @@ Instead of stopping at charts, the platform turns e-commerce data into **actiona
 |---|---|
 | 🗄️ Data Engineering | Relational schema, data loading, ETL, data warehouse (star schema) |
 | 🔍 Analytics | SQL analysis, EDA, KPI definitions |
-| 🤖 Machine Learning | Predictive & segmentation models |
+| 🤖 Deep Learning | Neural networks for prediction, forecasting & NLP |
 | 📊 Business Intelligence | Interactive Power BI dashboards |
 | 🚀 Deployment | API + web app, Docker, CI/CD |
 
@@ -113,13 +113,13 @@ customers / sellers ── geolocation (via zip code prefix)
 ```
 ┌──────────────┐   ┌──────────────┐   ┌────────────────┐   ┌──────────────┐
 │  Raw CSVs    │──▶│  Staging DB  │──▶│  Data Warehouse│──▶│ Analytics &  │
-│  (Kaggle)    │   │  (SQL)       │   │  (Star Schema) │   │ ML Features  │
+│  (Kaggle)    │   │  (SQL)       │   │  (Star Schema) │   │ DL Features  │
 └──────────────┘   └──────────────┘   └────────────────┘   └──────┬───────┘
                       ETL (Python)                                  │
                                                   ┌─────────────────┼─────────────────┐
                                                   ▼                 ▼                 ▼
                                            ┌────────────┐   ┌─────────────┐   ┌─────────────┐
-                                           │ Power BI   │   │ ML Models   │   │ REST API    │
+                                           │ Power BI   │   │ DL Models   │   │ REST API    │
                                            │ Dashboards │   │ (Training)  │   │ (FastAPI)   │
                                            └────────────┘   └─────────────┘   └──────┬──────┘
                                                                                      ▼
@@ -151,8 +151,8 @@ customers / sellers ── geolocation (via zip code prefix)
 - Seasonality, geography, category, and payment behavior.
 - Delivery and review relationship analysis.
 
-### Phase 4: Machine Learning
-- Customer segmentation, delivery delay prediction, review score prediction, demand forecasting (see [ML section](#-machine-learning-components)).
+### Phase 4: Deep Learning
+- Three simple neural networks: delivery delay prediction, review score prediction, and sales forecasting (see [DL section](#-deep-learning-components)).
 
 ### Phase 5: Business Intelligence
 - KPI definitions and DAX measures.
@@ -172,7 +172,8 @@ customers / sellers ── geolocation (via zip code prefix)
 | **Database** | PostgreSQL (or MySQL), SQLAlchemy |
 | **ETL & Data Processing** | Python, Pandas, NumPy |
 | **Analysis & Visualization** | Jupyter, Matplotlib, Seaborn, Plotly |
-| **Machine Learning** | Scikit-learn, XGBoost / LightGBM, Statsmodels / Prophet |
+| **Deep Learning** | TensorFlow / Keras |
+| **ML Utilities** | Scikit-learn (preprocessing, baselines, evaluation metrics) |
 | **Business Intelligence** | Power BI (DAX, Power Query) |
 | **API & App** | FastAPI, Streamlit |
 | **DevOps** | Docker, Docker Compose, GitHub Actions |
@@ -209,9 +210,9 @@ End-to-End-Business-Analytics-Decision-Platform/
 │   ├── 03_customer_segmentation.ipynb
 │   ├── 04_delivery_delay_model.ipynb
 │   ├── 05_review_score_model.ipynb
-│   └── 06_sales_forecasting.ipynb
+│   └── 06_sales_forecasting_lstm.ipynb
 │
-├── models/                   # Saved trained models
+├── models/                   # Saved trained models (.keras)
 ├── src/                      # Reusable modules (features, training, evaluation)
 ├── api/                      # FastAPI service
 ├── app/                      # Streamlit application
@@ -315,17 +316,19 @@ The API will be available at `http://localhost:8000/docs` and the app at `http:/
 
 ---
 
-## 🤖 Machine Learning Components
+## 🤖 Deep Learning Components
 
 | Model | Type | Goal | Business Value |
 |---|---|---|---|
-| **Customer Segmentation** | Unsupervised (RFM + K-Means) | Group customers by recency, frequency, monetary value | Targeted marketing & retention |
-| **Delivery Delay Prediction** | Classification | Predict whether an order will arrive after the estimated date | Proactive customer communication, logistics planning |
-| **Review Score Prediction** | Classification / Regression | Predict low-satisfaction orders | Early intervention to protect ratings |
-| **Sales Forecasting** | Time Series | Forecast future revenue and order volume | Inventory and capacity planning |
-| **Review Sentiment** *(optional)* | NLP | Classify Portuguese review comments | Understand the "why" behind scores |
+| **Delivery Delay Prediction** | Simple neural network (MLP) | Predict whether an order will arrive late | Proactive customer communication |
+| **Review Score Prediction** | Simple neural network (MLP) | Predict low-satisfaction orders | Early intervention to protect ratings |
+| **Sales Forecasting** | Simple LSTM | Forecast monthly revenue and orders | Inventory and capacity planning |
 
-**Evaluation:** Accuracy, Precision, Recall, F1, ROC-AUC for classification; RMSE, MAE, MAPE for regression and forecasting. Class imbalance is handled with resampling and class weights, and models are validated with cross-validation.
+> Customer segmentation (RFM + K-Means) is done as part of the analysis phase, without deep learning.
+
+**Approach:** Keep the models small and easy to explain: 2 to 3 dense layers with dropout and early stopping, built with Keras. Features are prepared with Scikit-learn, and each model is compared with a simple baseline (e.g., Logistic Regression).
+
+**Evaluation:** F1 and ROC-AUC for classification; RMSE and MAE for forecasting.
 
 ---
 
@@ -380,9 +383,9 @@ Power BI dashboards are organized into pages:
 
 | Name | Role | GitHub / LinkedIn |
 |---|---|---|
-| Mahmoud Hatem | _e.g., Team Lead / Data Engineer_ | [@mahmoudhatemai5](https://github.com/mahmoudhatemai5) |
+| Mahmoud Hatem | Machine Learning / Deep Learning Engineer | [@mahmoudhatemai5](https://github.com/mahmoudhatemai5) |
 | _Member 2_ | _e.g., Data Analyst_ | _link_ |
-| _Member 3_ | _e.g., ML Engineer_ | _link_ |
+| _Member 3_ | _e.g., Data Engineer_ | _link_ |
 | _Member 4_ | _e.g., BI Developer_ | _link_ |
 | _Member 5_ | _e.g., MLOps / Deployment_ | _link_ |
 
@@ -404,7 +407,7 @@ Power BI dashboards are organized into pages:
 - [ ] ETL pipeline
 - [ ] Data warehouse (star schema)
 - [ ] EDA & KPI definitions
-- [ ] Machine learning models
+- [ ] Deep learning models
 - [ ] Power BI dashboards
 - [ ] REST API & Streamlit app
 - [ ] Docker & CI/CD
