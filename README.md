@@ -189,7 +189,7 @@ What is in this repository today:
 End-to-End-Business-Analytics-Decision-Platform-/
 │
 ├── app/
-│   └── streamlit_app_all_problems.py      # Streamlit app (4 problems, one tab each)
+│   └── streamlit_app_all_problems.py      # Streamlit app (one tab per problem)
 ├── notebooks/
 │   ├── olist_all_problems_mlflow.ipynb    # Full modelling notebook (MLflow tracking)
 │   └── mlflow.db                          # MLflow tracking database (SQLite)
@@ -341,7 +341,7 @@ Power BI dashboards are organized into pages:
 - **CI/CD:** GitHub Actions runs linting and tests on every push, and builds the image on merge to `main`.
 - **Hosting:** *To be finalized (Render / Railway / Azure / AWS).*
 
-**Live demo (Streamlit Community Cloud):** LIVE_URL_HERE
+**Live demo (Streamlit Community Cloud):** https://olist-decision-platform.streamlit.app/
 
 ---
 
