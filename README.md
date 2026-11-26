@@ -341,7 +341,7 @@ Power BI dashboards are organized into pages:
 - **CI/CD:** GitHub Actions runs linting and tests on every push, and builds the image on merge to `main`.
 - **Hosting:** *To be finalized (Render / Railway / Azure / AWS).*
 
-**Live demo (Streamlit Community Cloud):** https://olist-decision-platform.streamlit.app/
+**Live demo (Streamlit Community Cloud):**
 
 ---
 
@@ -368,11 +368,11 @@ Power BI dashboards are organized into pages:
 
 | Name | Role | GitHub / LinkedIn |
 |---|---|---|
-| Mahmoud Hatem | Machine Learning / Deep Learning Engineer | [@mahmoudhatemai5](https://github.com/mahmoudhatemai5) |
+| Mahmoud Hatem | Machine Learning & Preprocessing | [@mahmoudhatemai5](https://github.com/mahmoudhatemai5) |
 | _Member 2_ | _e.g., Data Analyst_ | _link_ |
 | _Member 3_ | _e.g., Data Engineer_ | _link_ |
-| _Member 4_ | _e.g., BI Developer_ | _link_ |
-| _Member 5_ | _e.g., MLOps / Deployment_ | _link_ |
+| Alaa Ibrahim | Power BI | _link_ |
+| Mazen Mahmoud | Deployment | _link_ |
 
 **Supervisor:** _Name_  ·  **University / Program:** _Name_  ·  **Year:** 2026
 
