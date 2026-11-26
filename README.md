@@ -183,51 +183,36 @@ customers / sellers ── geolocation (via zip code prefix)
 
 ## 📁 Repository Structure
 
+What is in this repository today:
+
 ```
-End-to-End-Business-Analytics-Decision-Platform/
+End-to-End-Business-Analytics-Decision-Platform-/
 │
-├── data/
-│   ├── raw/                  # Original Olist CSVs (not tracked)
-│   ├── processed/            # Cleaned datasets
-│   └── README.md             # Data download instructions
-│
-├── sql/
-│   ├── 01_schema.sql         # Tables, keys, constraints
-│   ├── 02_load_data.sql      # Data loading scripts
-│   ├── 03_data_quality.sql   # Validation checks
-│   ├── 04_warehouse.sql      # Star schema (fact & dimension tables)
-│   └── 05_analysis.sql       # Business analysis queries
-│
-├── etl/
-│   ├── extract.py
-│   ├── transform.py
-│   ├── load.py
-│   └── pipeline.py           # Orchestrates the full ETL run
-│
+├── app/
+│   └── streamlit_app_all_problems.py      # Streamlit app (4 problems, one tab each)
 ├── notebooks/
-│   ├── 01_data_understanding.ipynb
-│   ├── 02_eda.ipynb
-│   ├── 03_customer_segmentation.ipynb
-│   ├── 04_delivery_delay_model.ipynb
-│   ├── 05_review_score_model.ipynb
-│   └── 06_sales_forecasting_lstm.ipynb
-│
-├── models/                   # Saved trained models (.keras)
-├── src/                      # Reusable modules (features, training, evaluation)
-├── api/                      # FastAPI service
-├── app/                      # Streamlit application
-├── dashboards/               # Power BI (.pbix) and screenshots
-├── docs/                     # ERD, architecture diagrams, reports
-├── tests/                    # Unit tests
-├── .github/workflows/        # CI/CD pipelines
-│
-├── Dockerfile
-├── docker-compose.yml
+│   ├── olist_all_problems_mlflow.ipynb    # Full modelling notebook (MLflow tracking)
+│   └── mlflow.db                          # MLflow tracking database (SQLite)
+├── artifacts/
+│   ├── app_extra.joblib                   # Extra lookup data used by the app
+│   └── v2/                                # Trained models + preprocessing used by the app
+│       ├── prep_v2.py
+│       ├── preprocess_v2.joblib
+│       ├── delay_v2.joblib
+│       ├── freight_v2.joblib
+│       ├── days_v2.joblib
+│       ├── satisfaction_v2.joblib
+│       └── review_text_model.joblib
+├── dashboards/
+│   └── DEPI FINAL PROJECT POWER done1.pbix   # Power BI dashboard
 ├── requirements.txt
-├── .env.example
 ├── .gitignore
 └── README.md
 ```
+
+The raw Olist CSVs are **not** stored in this repo. Download them from Kaggle (see below) into `data/raw/`, which is git-ignored.
+
+> The sections above (SQL, ETL, API, Docker, CI/CD) describe the planned full platform. The folders in the tree above are what is actually included.
 
 ---
 
@@ -265,28 +250,28 @@ Or with the Kaggle CLI:
 kaggle datasets download -d olistbr/brazilian-ecommerce -p data/raw --unzip
 ```
 
-### 4. Configure environment variables
+### 4. Run the Streamlit app
+
+Run from the repository root (the app loads the models from `artifacts/v2` relative to the working directory):
 
 ```bash
-cp .env.example .env
-# Edit .env with your database credentials
+streamlit run app/streamlit_app_all_problems.py
 ```
 
-### 5. Build the database and run the ETL
+The app has one tab per problem: delivery delay, freight cost, delivery days, customer satisfaction and customer segments. The satisfaction tab uses post-delivery inputs. The models were saved with scikit-learn 1.7.2, so keep that version (it is pinned in `requirements.txt`).
 
-```bash
-psql -U <user> -d <db> -f sql/01_schema.sql
-python etl/pipeline.py
-psql -U <user> -d <db> -f sql/04_warehouse.sql
-```
+### 5. Run the notebook
 
-### 6. Run with Docker (alternative)
+Open `notebooks/olist_all_problems_mlflow.ipynb` in Jupyter or VS Code and run the cells in order. It needs the Olist CSVs downloaded in step 3. Check the data paths in the first cells and point them to your local `data/raw/` folder.
 
-```bash
-docker compose up --build
-```
+Model results (from the notebook):
 
-The API will be available at `http://localhost:8000/docs` and the app at `http://localhost:8501`.
+| Problem | Best model | Metric |
+|---|---|---|
+| Delivery delay (classification) | HistGradientBoosting | AUC 0.810 (XGBoost 0.805, RandomForest 0.769) |
+| Freight cost (regression) | HistGradientBoosting | MAE 3.46 (RandomForest 4.12) |
+| Delivery days (regression) | HistGradientBoosting | MAE 4.26 (RandomForest 4.65) |
+| Customer satisfaction (classification) | HistGradientBoosting | AUC 0.716 (RandomForest 0.714) |
 
 ---
 
@@ -356,7 +341,7 @@ Power BI dashboards are organized into pages:
 - **CI/CD:** GitHub Actions runs linting and tests on every push, and builds the image on merge to `main`.
 - **Hosting:** *To be finalized (Render / Railway / Azure / AWS).*
 
-**Live demo:** _coming soon_
+**Live demo (Streamlit Community Cloud):** LIVE_URL_HERE
 
 ---
 
