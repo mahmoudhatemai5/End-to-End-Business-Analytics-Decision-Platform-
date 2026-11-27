@@ -227,7 +227,7 @@ def multi_line(x, series, xlabel, ylabel, title, vline=None, hline=None):
 
 # ---------------------------------------------------------------- sidebar
 st.sidebar.title("Settings")
-all_models = list(V2["delay"]["models"].keys())
+all_models = [m for m in V2["delay"]["models"].keys() if m != "RandomForest"]  # RandomForest removed from the delay comparison
 chosen = st.sidebar.multiselect("Delay models to compare", all_models, default=all_models)
 thr_mode = st.sidebar.radio("Delay threshold", ["Balanced (best F1)", "Catch more delays (recall-focused)"])
 thr_key = "thresholds" if thr_mode.startswith("Balanced") else "thresholds_recall"
