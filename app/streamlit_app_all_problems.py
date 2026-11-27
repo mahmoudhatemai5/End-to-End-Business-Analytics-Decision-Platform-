@@ -17,7 +17,7 @@ Run:
     pip install streamlit joblib scikit-learn xgboost category_encoders matplotlib pandas pydeck
     streamlit run streamlit_app_all_problems.py
 
-Needs artifacts/v2/ (created by the v2 section at the end of the notebook) next to this file.
+Needs artifacts/v2/ (incl. state_points.csv, used to derive the state from coordinates) (created by the v2 section at the end of the notebook) next to this file.
 Tab 4 (segments) also needs the original artifacts/ files from the notebook.
 """
 import math
@@ -110,7 +110,7 @@ def show_route_map(cust_lat, cust_lng, geo_lat, geo_lng):
         import pydeck as pdk
         scatter = pdk.Layer(
             "ScatterplotLayer", data=pts, get_position=["lon", "lat"],
-            get_fill_color=[55, 138, 221], get_radius=45000, pickable=True)
+            get_fill_color=[55, 138, 221], get_radius=2500, radius_min_pixels=3, radius_max_pixels=6, pickable=True)
         arc = pdk.Layer(
             "ArcLayer",
             data=pd.DataFrame([{"slon": geo_lng, "slat": geo_lat, "dlon": cust_lng, "dlat": cust_lat}]),
@@ -272,22 +272,39 @@ with o3:
     num_sellers = number_input("Unique sellers", 1.0, 10.0, max(1.0, dv("num_unique_sellers", 1)), 1.0)
     payment_type = st.selectbox("Payment type", LV["payment_type"])
 
+
+@st.cache_data(show_spinner=False)
+def _state_points(v2_dir):
+    p = os.path.join(v2_dir, "state_points.csv")
+    return pd.read_csv(p) if os.path.exists(p) else None
+
+
+def state_from_coords(lat, lng, options):
+    """Brazilian state of a lat/lng: the state of the nearest real Olist location (artifacts/v2/state_points.csv)."""
+    pts = _state_points(V2_DIR)
+    if pts is None:
+        return options[0]
+    d2 = (pts["lat"].values - lat) ** 2 + ((pts["lng"].values - lng) * np.cos(np.radians(lat))) ** 2
+    st_ = str(pts["s"].values[int(np.argmin(d2))])
+    return st_ if st_ in options else options[0]
+
+
 st.header("Places & distance")
 m1, m2 = st.columns([1, 1])
 with m1:
     l1, l2 = st.columns(2)
     with l1:
         st.markdown("**Customer**")
-        customer_state = st.selectbox("Customer state", LV["customer_state"],
-                                      index=LV["customer_state"].index("SP") if "SP" in LV["customer_state"] else 0)
         cust_lat = number_input("Customer latitude", -35.0, 6.0, dv("customer_lat", -22.9), format="%.4f")
         cust_lng = number_input("Customer longitude", -75.0, -30.0, dv("customer_lng", -48.0), format="%.4f")
+        customer_state = state_from_coords(cust_lat, cust_lng, LV["customer_state"])
+        st.info(f"Customer state (from coordinates): **{customer_state}**")
     with l2:
         st.markdown("**Seller**")
-        seller_state = st.selectbox("Seller state", LV["seller_state"],
-                                    index=LV["seller_state"].index("SP") if "SP" in LV["seller_state"] else 0)
         geo_lat = number_input("Seller latitude", -35.0, 6.0, dv("geolocation_lat", -22.9), format="%.4f")
         geo_lng = number_input("Seller longitude", -75.0, -30.0, dv("geolocation_lng", -46.6), format="%.4f")
+        seller_state = state_from_coords(geo_lat, geo_lng, LV["seller_state"])
+        st.info(f"Seller state (from coordinates): **{seller_state}**")
     auto_distance = haversine_km(cust_lat, cust_lng, geo_lat, geo_lng)
     manual_distance = st.checkbox("Enter the distance manually instead", value=False)
     if manual_distance:
