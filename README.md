@@ -260,6 +260,25 @@ streamlit run app/streamlit_app_all_problems.py
 
 The app has one tab per problem: delivery delay, freight cost, delivery days, customer satisfaction and customer segments. The satisfaction tab uses post-delivery inputs. The models were saved with scikit-learn 1.7.2, so keep that version (it is pinned in `requirements.txt`).
 
+### 4b. Run with Docker
+
+Docker runs the Streamlit app without installing Python or any library on your machine. You only need Docker (Docker Desktop on Windows/Mac). The image includes the app and the trained models in `artifacts/`.
+
+**Option A: Docker Compose (one command)**
+
+```bash
+docker compose up --build
+```
+
+**Option B: plain Docker**
+
+```bash
+docker build -t olist-streamlit-app .
+docker run --rm -p 8501:8501 olist-streamlit-app
+```
+
+Then open **http://localhost:8501** in your browser. Stop with `Ctrl+C` (Compose: `docker compose down`).
+
 ### 5. Run the notebook
 
 Open `notebooks/olist_all_problems_mlflow.ipynb` in Jupyter or VS Code and run the cells in order. It needs the Olist CSVs downloaded in step 3. Check the data paths in the first cells and point them to your local `data/raw/` folder.
@@ -395,7 +414,8 @@ Power BI dashboards are organized into pages:
 - [ ] Deep learning models
 - [ ] Power BI dashboards
 - [ ] REST API & Streamlit app
-- [ ] Docker & CI/CD
+- [x] Docker (Dockerfile + docker-compose.yml)
+- [ ] CI/CD
 - [ ] Cloud deployment
 - [ ] Final report & presentation
 
